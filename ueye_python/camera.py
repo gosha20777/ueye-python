@@ -80,7 +80,7 @@ class Camera:
             ueye.is_AllocImageMem(self.h_cam,
                                   rect.width, rect.height, bpp,
                                   buff.mem_ptr, buff.mem_id)
-            ret = ueye.is_AddToSequence(self.h_cam, buff.mem_ptr, buff.mem_id))
+            ret = ueye.is_AddToSequence(self.h_cam, buff.mem_ptr, buff.mem_id)
             if ret != ueye.IS_SUCCESS:
                 raise UEyeError(ret)
             self.img_buffers.append(buff)

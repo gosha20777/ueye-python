@@ -4,7 +4,7 @@ setup(
     name='ueye-python',
     version='0.1.0',
     description='Python wrapper for the ueye camera SDK',
-    author='Georgy Perevozchikov'
+    author='Georgy Perevozchikov',
     author_email='gosha20777@live.ru',
     license='MIT',
     classifiers=[
