@@ -26,7 +26,7 @@ class Camera:
         """
         self.h_cam = ueye.HIDS(device_id)
         self.buffer_count = buffer_count
-        self.img_buffer = []
+        self.img_buffers = []
         self.current_fps = None
 
     def __enter__(self) -> None:
