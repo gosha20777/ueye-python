@@ -18,6 +18,6 @@ setup(
     ],
     keywords='ueye camera ids pyueye',
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'samples']),
-    install_requires=['pyueye', 'numpy'],
+    install_requires=['pyueye', 'opencv-python', 'numpy'],
     extras_require={},
 )
