@@ -328,7 +328,7 @@ class Camera:
                                        img_buffer.mem_id)
         if ret == ueye.IS_SUCCESS:
             imdata = ImageData(self.camera, img_buffer)
-            data = imdata.as_1d_image()
+            data = imdata.as_np_image()
             imdata.unlock()
             self.stop_video()
         else:
@@ -348,7 +348,7 @@ class Camera:
                                            img_buffer.mem_id)
             if ret == ueye.IS_SUCCESS:
                 imdata = ImageData(self.camera, img_buffer)
-                ims.append(imdata.as_1d_image())
+                ims.append(imdata.as_np_image())
                 imdata.unlock()
             else:
                 print(f"Warning: Missed {i}th frame !")
