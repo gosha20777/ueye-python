@@ -42,7 +42,7 @@ class CliWritor:
             
             ret = ueye.is_WaitForNextImage(
                 self.cam.camera,
-                self.cam.__get_timeout(),
+                self.__get_timeout(),
                 img_buffer.mem_ptr,
                 img_buffer.mem_id
             )
@@ -59,6 +59,12 @@ class CliWritor:
                 self.idx += 1
             else:
                 print(f'Frame dropped')
+    
+    def __get_timeout(self):
+        fps = self.cam.get_fps()
+        if fps == 0:
+            fps = 1
+        return int(1.5*(1/fps)+1)*1000
 
 
 class ThreadWritor(Thread):
