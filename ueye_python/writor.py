@@ -12,12 +12,13 @@ class CliWritor:
         self, 
         camera: Camera,
         save_dir: str,
-        save_format: str = 'jpg'
+        save_format: str = 'jpg',
+        copacity: int = 100000
     ) -> None:
         self.cam = camera
         self.idx = 0
         self.dir_idx = 0
-        self.copacity = 100000
+        self.copacity = copacity
         self.base_dir = save_dir
         self.save_dir = os.path.join(self.base_dir, str(self.dir_idx))
         self.save_format = save_format

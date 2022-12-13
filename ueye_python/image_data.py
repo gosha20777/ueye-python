@@ -52,7 +52,8 @@ class ImageData:
         """
         Return the image buffer as a numpy array.
         """
-        channels = int((7 + self.bits_per_pixel) / 8)
+        #channels = int((7 + self.bits_per_pixel) / 8)
+        channels = 3
         
         if channels > 1:
             return np.reshape(self.array, (self.mem_info.height,
