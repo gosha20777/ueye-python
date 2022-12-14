@@ -276,6 +276,49 @@ class Camera:
         if ret != ueye.IS_SUCCESS:
             raise UEyeError(ret)
 
+    def set_gain(
+            self, 
+            master: int, 
+            red: int = 0, 
+            green: int = 0,
+            blue: int = 0
+        ) -> None:
+        """
+        Set the gain.
+        Returns
+        =======
+        gain: number
+            Real gain, can be slightly different than the asked one.
+        """
+        master_gain = ueye.c_int(master)
+        red_gain = ueye.c_int(red)
+        green_gain = ueye.c_int(green)
+        blue_gain = ueye.c_int(blue)
+        ret = ueye.is_SetHardwareGain(
+            self.h_cam, 
+            master_gain, 
+            red_gain, 
+            green_gain, 
+            blue_gain
+        )
+        if ret != ueye.IS_SUCCESS:
+            raise UEyeError(ret)
+
+    def set_black_level(self, black_level: int) -> None:
+        """
+        Set the black level.
+        Returns
+        =======
+        black_level: number
+            Real black level, can be slightly different than the asked one.
+        """
+        new_black_level = ueye.c_uint(black_level)
+        ret = ueye.is_Blacklevel(self.h_cam,
+                                 ueye.IS_BLACKLEVEL_CMD_SET_OFFSET,
+                                 new_black_level, 4)
+        if ret != ueye.IS_SUCCESS:
+            raise UEyeError(ret)
+
     def set_gain_auto(self, toggle):
         """
         Set/unset auto gain.
