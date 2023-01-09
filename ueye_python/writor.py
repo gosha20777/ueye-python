@@ -43,12 +43,14 @@ class CliWritor:
         img_buffer = ImageBuffer()
         while True:
             if self.idx % self.copacity == 0:
-                print(f'Saved {self.idx} frames')
+                print(f'Processed {self.idx * self.dir_idx} frames')
+                self.dir_idx += 1
+                self.idx = 1
+
                 if self.current_date != datetime.now().strftime('%Y-%m-%d'):
                     self.current_date = datetime.now().strftime('%Y-%m-%d')
                     print(f'New date: {self.current_date}')
-                    self.dir_idx += 1
-                    self.idx = 1
+                    self.dir_idx = 1
 
                 self.save_dir = os.path.join(
                     self.base_dir, 
@@ -84,7 +86,15 @@ class CliWritor:
                 )
                 if not self.__is_empty_image(img):
                     cv2.imwrite(save_path, img)
+
                 self.idx += 1
+
+                if self.idx % self.copacity == 0:
+                    save_path = os.path.join(
+                        self.base_dir, 
+                        'sample.' + self.save_format
+                    )
+                    cv2.imwrite(save_path, img)
             else:
                 print(f'Frame dropped')
     
