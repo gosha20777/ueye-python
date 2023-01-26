@@ -7,6 +7,7 @@ import os
 import cv2
 import numpy as np
 from datetime import datetime
+import hashlib
 
 
 class CliWritor:
@@ -80,14 +81,15 @@ class CliWritor:
                 img_data = ImageData(self.cam.camera, img_buffer)
                 img = img_data.as_np_image()
                 img_data.unlock()
-                save_path = os.path.join(
-                    self.save_dir, 
-                    str(self.idx) + '.' + self.save_format
-                )
+                
                 if not self.__is_empty_image(img):
+                    name = hashlib.md5(img).hexdigest()
+                    save_path = os.path.join(
+                        self.save_dir, 
+                        str(name) + '.' + self.save_format
+                    )
                     cv2.imwrite(save_path, img)
-
-                self.idx += 1
+                    self.idx += 1
 
                 if self.idx % self.copacity == 0:
                     save_path = os.path.join(
