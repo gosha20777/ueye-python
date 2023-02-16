@@ -43,12 +43,12 @@ class GatherThread(Thread):
     def run(self):
         while self.running:
             img_buffer = ImageBuffer()
-            ret = ueye.is_WaitForNextImage(self.cam,
+            ret = ueye.is_WaitForNextImage(self.cam.camera,
                                            self.__get_timeout(),
                                            img_buffer.mem_ptr,
                                            img_buffer.mem_id)
             if ret == ueye.IS_SUCCESS:
-                imdata = ImageData(self.cam, img_buffer)
+                imdata = ImageData(self.cam.camera, img_buffer)
                 self._process(imdata)
 
     def process(self, image_data: ImageData):
