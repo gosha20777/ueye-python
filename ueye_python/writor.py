@@ -10,6 +10,100 @@ from datetime import datetime
 import hashlib
 
 
+# nmb_frames = 3000
+# filepath= "video1.avi"
+# wait = input("PRESS ENTER TO BEGIN RECORDING.")
+# cam.set_colormode(ueye.IS_CM_MONO8)
+# # Create a thread to save a video
+# thread = RecordThread(cam, path=filepath,
+#                       use_memory=True,
+#                       nmb_frame=nmb_frames,
+#                       verbose=True)
+# thread.start()
+# # Wait for the thread to edn
+# thread.join()
+
+
+class GatherThread(Thread):
+    def __init__(
+            self, 
+            camera: Camera, 
+            copy=True):
+        """
+        Thread used for gather images.
+        """
+        super().__init__()
+        self.timeout = 1000
+        self.cam = camera
+        self.running = True
+        self.copy = copy
+
+        self.cam.capture_video()
+
+    def run(self):
+        while self.running:
+            img_buffer = ImageBuffer()
+            ret = ueye.is_WaitForNextImage(self.cam,
+                                           self.__get_timeout(),
+                                           img_buffer.mem_ptr,
+                                           img_buffer.mem_id)
+            if ret == ueye.IS_SUCCESS:
+                imdata = ImageData(self.cam, img_buffer)
+                self._process(imdata)
+
+    def process(self, image_data: ImageData):
+        pass
+
+    def _process(self, image_data: ImageData):
+        self.process(image_data)
+    
+    def __get_timeout(self):
+        fps = self.cam.get_fps()
+        if fps == 0:
+            fps = 1
+        return int(1.5*(1/fps)+1)*1000
+
+    def stop(self):
+        self.cam.stop_video()
+        self.running = False
+
+
+class VieoWritor(GatherThread):
+    def __init__(self, 
+                camera: Camera, 
+                path: str, 
+                duration: int, 
+                copy=True,
+            ):
+        """
+        Thread used to record videos.
+        """
+        super().__init__(camera=camera, copy=copy)
+        fps = int(self.cam.get_fps())
+        self.nmb_frame = duration * fps
+        self.ind_frame = 0
+        self.path = path
+        self.vw = self.open_video_writer()
+
+    def open_video_writer(self):
+        aoi = self.cam.get_aoi()
+        fourcc = cv2.VideoWriter_fourcc("M", "P", "E", "G")
+        return cv2.VideoWriter(self.path,
+                               fourcc=fourcc,
+                               fps=24,
+                               frameSize=(aoi.width, aoi.height),
+                               isColor=0)
+    def process(self, imdata: ImageData):
+        self.vw.write(imdata.as_np_image())
+        self.ind_frame += 1
+        if self.ind_frame >= self.nmb_frame:
+            self.stop()
+
+    def stop(self):
+        self.vw.release()
+        super().stop()
+
+
 class CliWritor:
     def __init__(
         self, 
