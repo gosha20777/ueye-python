@@ -79,28 +79,33 @@ class VieoWritor(GatherThread):
         Thread used to record videos.
         """
         super().__init__(camera=camera, copy=copy)
-        fps = int(self.cam.get_fps())
-        self.nmb_frame = duration * fps
+        self.fps = int(self.cam.get_fps())
+        self.nmb_frame = duration * self.fps
         self.ind_frame = 0
         self.path = path
-        self.vw = self.open_video_writer()
+        self.in_memory_images = []
 
     def open_video_writer(self):
         aoi = self.cam.get_aoi()
-        fourcc = cv2.VideoWriter_fourcc("M", "P", "E", "G")
-        return cv2.VideoWriter(self.path,
-                               fourcc=fourcc,
-                               fps=24,
-                               frameSize=(aoi.width, aoi.height),
-                               isColor=0)
+        vwriter = cv2.VideoWriter(
+            self.path, 
+            cv2.VideoWriter_fourcc(*'MJPG'),
+            self.fps, 
+            (aoi.width, aoi.height)
+        )
+        return vwriter
+    
     def process(self, imdata: ImageData):
-        self.vw.write(imdata.as_np_image())
+        self.in_memory_images.append(imdata.as_np_image())
         self.ind_frame += 1
         if self.ind_frame >= self.nmb_frame:
             self.stop()
 
     def stop(self):
-        self.vw.release()
+        vw = self.open_video_writer()
+        for img in self.in_memory_images:
+            vw.write(img)
+        vw.release()
         super().stop()
 
 
